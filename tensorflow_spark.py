@@ -144,7 +144,7 @@ def run(cmd):
 #assuming img_dir is something like 's3://ml-field/demo/tensorflow/data'
 def read_file_index_s3(img_dir):
   import boto3
-  import s3fs
+  #import s3fs
   s3 = boto3.resource('s3')
   if img_dir.split('/')[0] == 's3:': 
     bucket_name = img_dir.split('/')[2]
@@ -166,7 +166,7 @@ def read_file_index_s3(img_dir):
   input_data = input_data[1:]
   return [input_data[i:i+image_batch_size] for i in range(0,len(input_data), image_batch_size)]
 
-batched_data = read_file_index_s3(img_dir)
+batched_data = read_file_index_s3(image_dir)
 
 
 def read_file_index():
@@ -252,24 +252,3 @@ from IPython.display import Image
 from IPython.core.display import HTML
 Image(url=local_image[1])
 print(local_image[2])
-  
-
-  
-def download_image(img_url):
-  from six.moves import urllib
-  dest_directory = image_dir
-  if not os.path.exists(dest_directory):
-    os.makedirs(dest_directory)
-  filename = img_url.split('/')[-1]
-  filepath = os.path.join(dest_directory, filename)
-  if not os.path.exists(filepath):
-    filepath2, _ = urllib.request.urlretrieve(img_url, filepath)
-    print("filepath2", filepath2)
-    statinfo = os.stat(filepath)
-    print('Succesfully downloaded', filename, statinfo.st_size, 'bytes.')
-  else:
-    print('Data already downloaded:', filepath, os.stat(filepath))
-
-#for i in range(0, len(batched_data)):
-#  for (img_id, img_url) in batched_data[i]:
-#    download_image(img_url)
