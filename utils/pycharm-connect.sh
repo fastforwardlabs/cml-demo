@@ -6,6 +6,6 @@
 
 
 
-cdswctl login -n `id -un` --url http://cdsw-16-launch-4.vpc.cloudera.com
-cdswctl ssh-endpoint -p `id -un`/airline-sentiment -c 2 -m 4
-ssh -p 3585 cdsw@localhost
+cdswctl login -n `id -un` --url http://<FQDN>
+cdswctl ssh-endpoint -p `id -un`/<PROJECT NAME> -c 2 -m 4
+#ssh -p 3585 cdsw@localhost

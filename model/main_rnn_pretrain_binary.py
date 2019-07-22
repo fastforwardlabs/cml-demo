@@ -9,9 +9,39 @@ from torchtext import data
 from sklearn.model_selection import train_test_split
 
 data_dir = '/home/cdsw/data/'
+s3_bucket_name = 'ml-field'
+s3_file_name = '/demo/airline-sentiment/data/Tweets.csv'
+s3_data_file = 's3a://ml-field/demo/airline-sentiment/data/Tweets.csv'
 model_dir = '/home/cdsw/model/'
 
-sentiments = pd.read_csv(data_dir+'/Tweets.csv')
+#read from python/s3
+#populate ~/.aws/credentials with
+#  [default]
+#  region = us-west-2
+#  aws_access_key_id = <>
+#  aws_secret_access_key = <>
+#import boto3
+#s3 = boto3.resource('s3')
+#bucket = s3.Bucket(s3_bucket_name)
+#for obj in bucket.objects.all():
+#    key = obj.key
+#    body = obj.get()['Body'].read()
+#s3_client = boto3.client('s3')
+#s3_client.Object(s3_bucket_name, s3_file_name).download_file(
+#    f'/tmp/Tweets.csv')
+
+import s3fs
+sentiments = pd.read_csv(s3_data_file)
+
+#read from spark/s3
+#from pyspark.sql import SparkSession
+#spark = SparkSession.builder.appName("joopitur").getOrCreate()
+#df=spark.read.csv("s3a://ml-field/demo/airline-sentiment/data/Tweets.csv")
+#sentiments = spark.read.json(data_file).toPandas()
+#spark.stop()
+
+#read from local files
+#sentiments = pd.read_csv(data_dir+'/Tweets.csv')
 # use only not null text
 
 clean_df = sentiments[sentiments['text'].notnull() &
@@ -241,62 +271,4 @@ test_loss, test_acc = evaluate(model, test_iterator, criterion)
 
 print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc*100:.2f}%')
 cdsw.track_metric("Test Accuracy",round(train_acc, 2))
-
-
-# expose this for api
-
-import spacy
-nlp = spacy.load('en')
-
-
-def predict_sentiment(model, sentence):
-    model.eval()
-    tokenized = [tok.text for tok in nlp.tokenizer(sentence)]
-    indexed = [TEXT.vocab.stoi[t] for t in tokenized]
-    tensor = torch.LongTensor(indexed).to(device)
-    tensor = tensor.unsqueeze(1)
-    # print(tensor)
-    sentiment, hidden = model(tensor)
-    prediction = torch.sigmoid(sentiment)
-    return prediction.item(), hidden
-
-
-print(predict_sentiment(model, "you are horrible"))
-
-# use with formatted train/val/test predict_sentiment_from_dataset(model, next(train_data.text))
-
-def predict_sentiment_from_dataset(model, tokenized):
-    model.eval()
-    # tokenized = [tok.text for tok in nlp.tokenizer(sentence)]
-    indexed = [TEXT.vocab.stoi[t] for t in tokenized]
-    tensor = torch.LongTensor(indexed).to(device)
-    tensor = tensor.unsqueeze(1)
-    # print(tensor)
-    sentiment, hidden = model(tensor)
-    prediction = torch.sigmoid(sentiment)
-    return prediction.item(), hidden
-
-
-# save for front-end application
-prediction_list = []
-embedding_list = []
-airline_list = []
-tweet_list = []
-for example in test_data:
-    text = example.text  # this is tokenized
-    airline = example.airline
-    prediction, embedding = predict_sentiment_from_dataset(model, text)
-    tweet_list.append(text)
-    prediction_list.append(prediction)
-    embedding_list.append(embedding.data.numpy().squeeze(1))
-    airline_list.append(airline)
-
-output_dict = {"prediction": prediction_list,
-               "embedding": embedding_list,
-               "tweet": tweet_list,
-               "airline": airline_list}
-outfile = open(data_dir+'frontend_data', 'wb')
-pickle.dump(output_dict, outfile, -1)
-outfile.close()
-cdsw.track_file(data_dir+'frontend_data')
 
