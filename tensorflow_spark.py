@@ -144,8 +144,12 @@ def run(cmd):
 #assuming img_dir is something like 's3://ml-field/demo/tensorflow/data'
 def read_file_index_s3(img_dir):
   import boto3
+  from botocore.handlers import disable_signing
   #import s3fs
+  
   s3 = boto3.resource('s3')
+  s3.meta.client.meta.events.register('choose-signer.s3.*', disable_signing)
+  
   if img_dir.split('/')[0] == 's3:': 
     bucket_name = img_dir.split('/')[2]
     bucket = s3.Bucket(bucket_name)

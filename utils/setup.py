@@ -4,9 +4,9 @@
 
 ##NOTE: You need a session with at least 8GB memory to run this
 
-!hdfs dfs -mkdir /tmp/airline-sentiment
+cd
 !mkdir R
-!mv utils/cdsw-build.sh .
-!chmod 755 cdsw-build.sh
-!sh ./cdsw-build.sh
+!mv /home/cdsw/utils/cdsw-build.sh .
+!chmod 755 /home/cdsw/cdsw-build.sh
+!sh /home/cdsw/cdsw-build.sh
 !/usr/local/bin/Rscript install.R
