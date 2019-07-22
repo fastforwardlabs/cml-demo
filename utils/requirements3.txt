@@ -1,7 +1,7 @@
-#spacy==2.1.4
-#torch==1.1.0
-#torchtext==0.3.1
-#sklearn==0.0
+spacy==2.1.4
+torch==1.1.0
+torchtext==0.3.1
+sklearn==0.0
 numpy==1.16.4
 setuptools==41.0.1
 protobuf==3.9.0
