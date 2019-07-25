@@ -5,8 +5,7 @@
 ##NOTE: You need a session with at least 8GB memory to run this
 
 cd
-!mkdir R
-!mv /home/cdsw/utils/cdsw-build.sh .
+!cp /home/cdsw/utils/cdsw-build.sh .
 !chmod 755 /home/cdsw/cdsw-build.sh
 !sh /home/cdsw/cdsw-build.sh
-!/usr/local/bin/Rscript install.R
+!Rscript /home/cdsw/utils/install.R
