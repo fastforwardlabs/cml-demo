@@ -4,45 +4,15 @@ import torch.nn as nn
 import pickle
 import sys
 import cdsw
-
+import s3fs
 from torchtext import data
 from sklearn.model_selection import train_test_split
 
 data_dir = '/home/cdsw/data/'
-s3_bucket_name = 'ml-field'
-s3_file_name = '/demo/airline-sentiment/data/Tweets.csv'
 s3_data_file = 's3a://ml-field/demo/airline-sentiment/data/Tweets.csv'
 model_dir = '/home/cdsw/model/'
 
-#read from python/s3
-#populate ~/.aws/credentials with
-#  [default]
-#  region = us-west-2
-#  aws_access_key_id = <>
-#  aws_secret_access_key = <>
-#import boto3
-#s3 = boto3.resource('s3')
-#bucket = s3.Bucket(s3_bucket_name)
-#for obj in bucket.objects.all():
-#    key = obj.key
-#    body = obj.get()['Body'].read()
-#s3_client = boto3.client('s3')
-#s3_client.Object(s3_bucket_name, s3_file_name).download_file(
-#    f'/tmp/Tweets.csv')
-
-import s3fs
 sentiments = pd.read_csv(s3_data_file)
-
-#read from spark/s3
-#from pyspark.sql import SparkSession
-#spark = SparkSession.builder.appName("joopitur").getOrCreate()
-#df=spark.read.csv("s3a://ml-field/demo/airline-sentiment/data/Tweets.csv")
-#sentiments = spark.read.json(data_file).toPandas()
-#spark.stop()
-
-#read from local files
-#sentiments = pd.read_csv(data_dir+'/Tweets.csv')
-# use only not null text
 
 clean_df = sentiments[sentiments['text'].notnull() &
                       sentiments['airline'].notnull() &
