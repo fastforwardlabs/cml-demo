@@ -2,8 +2,8 @@
 
 CLUSTER_NAME=`hostname -s | rev | cut -d'-' -f 2- | rev`-
 WORKERS=`echo {5..6}`
-ENGINE_NAME='spacy'
-ENGINE_FILE={$ENGINE_NAME}.tar
+ENGINE_NAME='cml-demo'
+ENGINE_FILE=$ENGINE_NAME.tar
 ENGINE_INSTANCE='latest'
 
 #sudo yum install -y git
