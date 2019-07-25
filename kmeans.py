@@ -31,14 +31,13 @@ spark = SparkSession\
     .appName("PythonKMeans")\
     .config("spark.executor.memory","1g")\
     .config("spark.executor.cores","1")\
-    .config("spark.jars","file:/home/cdsw/jars/org.apache.hadoop_hadoop-aws-3.2.0.jar,file:/home/cdsw/jars/com.amazonaws_aws-java-sdk-bundle-1.11.375.jar")\
     .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
     .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
     .config("spark.hadoop.com.amazonaws.services.s3a.enableV4","true")\
     .getOrCreate()
 
-    
+#    .config("spark.jars","file:/home/cdsw/jars/org.apache.hadoop_hadoop-aws-3.2.0.jar,file:/home/cdsw/jars/com.amazonaws_aws-java-sdk-bundle-1.11.375.jar")\    
 #.config("spark.jars.packages","org.apache.hadoop:hadoop-aws:3.2.0")\
 
     

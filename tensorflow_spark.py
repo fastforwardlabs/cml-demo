@@ -1,10 +1,7 @@
 # Tensorflow on Spark
-
-# Works on Python 2, not Python 3
 #
 # Before running:
-# pip install tensorflow
-# pip install protobuf
+# pip install -r /home/cdsw/utils/requirements3.txt
 # close session, start a new session in the same project
 
 MODEL_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
@@ -57,7 +54,6 @@ sc = SparkSession\
     .builder\
     .appName("S3 Image Scoring")\
     .config("spark.executor.memory", "4g")\
-    .config("spark.jars","file:/home/cdsw/jars/org.apache.hadoop_hadoop-aws-3.2.0.jar,file:/home/cdsw/jars/com.amazonaws_aws-java-sdk-bundle-1.11.375.jar")\
     .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
     .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
@@ -256,3 +252,4 @@ from IPython.display import Image
 from IPython.core.display import HTML
 Image(url=local_image[1])
 print(local_image[2])
+
