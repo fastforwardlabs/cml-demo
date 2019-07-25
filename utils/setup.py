@@ -7,6 +7,5 @@
 cd
 !cp /home/cdsw/utils/cdsw-build.sh .
 !chmod 755 /home/cdsw/cdsw-build.sh
-!sh /home/cdsw/cdsw-build.sh
-!if [[ ! -d /home/cdsw/data ]]; then mkdir -m 755 /home/cdsw/data; fi
+!bash /home/cdsw/cdsw-build.sh
 !Rscript /home/cdsw/utils/install.R
