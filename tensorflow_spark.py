@@ -47,6 +47,7 @@ def maybe_download_and_extract():
 maybe_download_and_extract()
 
 model_path = os.path.join(model_dir, 'classify_image_graph_def.pb')
+#with tf.gfile.GFile(model_path, 'rb') as f: 
 with gfile.FastGFile(model_path, 'rb') as f:
   model_data = f.read()
 
