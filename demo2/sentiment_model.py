@@ -8,9 +8,9 @@ import s3fs
 from torchtext import data
 from sklearn.model_selection import train_test_split
 
-data_dir = '/home/cdsw/data/'
+data_dir = '/home/cdsw/demo2/data/'
 s3_data_file = 's3a://ml-field/demo/airline-sentiment/data/Tweets.csv'
-model_dir = '/home/cdsw/model/'
+model_dir = '/home/cdsw/demo2/model/'
 
 sentiments = pd.read_csv(s3_data_file)
 

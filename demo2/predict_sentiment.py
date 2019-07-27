@@ -6,7 +6,7 @@ import pickle
 import os
 nlp = spacy.load('en')
 
-model_dir = '/home/cdsw/model/'
+model_dir = '/home/cdsw/demo2/model/'
 
 #first look for vocab that came from experiments
 if os.path.exists('/home/cdsw/vocab_index.pkl'):
