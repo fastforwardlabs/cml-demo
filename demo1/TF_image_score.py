@@ -47,14 +47,14 @@ def maybe_download_and_extract():
 maybe_download_and_extract()
 
 model_path = os.path.join(model_dir, 'classify_image_graph_def.pb')
-#with tf.gfile.GFile(model_path, 'rb') as f: 
-with gfile.FastGFile(model_path, 'rb') as f:
+with tf.gfile.GFile(model_path, 'rb') as f: 
   model_data = f.read()
 
 sc = SparkSession\
     .builder\
     .appName("S3 Image Scoring")\
     .config("spark.executor.memory", "4g")\
+    .config("spark.executor.instances", 8)\
     .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
     .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
