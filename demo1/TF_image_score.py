@@ -5,9 +5,8 @@
 # close session, start a new session in the same project
 
 MODEL_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
-model_dir = '/tmp/imagenet'
-image_dir = 's3://ml-field/demo/tensorflow/data'
-IMAGES_INDEX_URL = 'https://gist.githubusercontent.com/tnachen/ef2a343c12811a4c0dbe01d76653e37e/raw/937faec9062b9f1ecb279a0985fe15f1d6e3afec/'
+MODEL_DIR = '/tmp/imagenet'
+IMAGE_DIR = 's3://ml-field/demo/tensorflow/data'
 
 # Number of images per batch.
 # 1 batch corresponds to 1 RDD row.
@@ -30,7 +29,7 @@ from subprocess import Popen, PIPE, STDOUT
 def maybe_download_and_extract():
   """Download and extract model tar file."""
   from six.moves import urllib
-  dest_directory = model_dir
+  dest_directory = MODEL_DIR
   if not os.path.exists(dest_directory):
     os.makedirs(dest_directory)
   filename = MODEL_URL.split('/')[-1]
@@ -46,7 +45,7 @@ def maybe_download_and_extract():
 
 maybe_download_and_extract()
 
-model_path = os.path.join(model_dir, 'classify_image_graph_def.pb')
+model_path = os.path.join(MODEL_DIR, 'classify_image_graph_def.pb')
 with tf.gfile.GFile(model_path, 'rb') as f: 
   model_data = f.read()
 
@@ -72,10 +71,10 @@ class NodeLookup(object):
                uid_lookup_path=None):
     if not label_lookup_path:
       label_lookup_path = os.path.join(
-          model_dir, 'imagenet_2012_challenge_label_map_proto.pbtxt')
+          MODEL_DIR, 'imagenet_2012_challenge_label_map_proto.pbtxt')
     if not uid_lookup_path:
       uid_lookup_path = os.path.join(
-          model_dir, 'imagenet_synset_to_human_label_map.txt')
+          MODEL_DIR, 'imagenet_synset_to_human_label_map.txt')
     self.node_lookup = self.load(label_lookup_path, uid_lookup_path)
 
   def load(self, label_lookup_path, uid_lookup_path):
@@ -167,7 +166,7 @@ def read_file_index_s3(img_dir):
   input_data = input_data[1:]
   return [input_data[i:i+image_batch_size] for i in range(0,len(input_data), image_batch_size)]
 
-batched_data = read_file_index_s3(image_dir)
+batched_data = read_file_index_s3(IMAGE_DIR)
 
 
 def read_file_index():
