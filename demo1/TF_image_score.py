@@ -4,7 +4,7 @@
 # pip install -r /home/cdsw/utils/requirements3.txt
 # close session, start a new session in the same project
 
-MODEL_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz'
+MODEL_URL = 'https://ml-field.s3-us-west-2.amazonaws.com/demo/tensorflow/model/inception-2015-12-05.tgz'
 MODEL_DIR = '/tmp/imagenet'
 IMAGE_DIR = 's3://ml-field/demo/tensorflow/data'
 
