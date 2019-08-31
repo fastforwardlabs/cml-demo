@@ -53,7 +53,7 @@ sc = SparkSession\
     .builder\
     .appName("S3 Image Scoring")\
     .config("spark.executor.memory", "4g")\
-    .config("spark.executor.instances", 8)\
+    .config("spark.executor.instances", 2)\
     .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
     .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
@@ -245,7 +245,7 @@ labeled_images = urls.flatMap(apply_inference_on_batch)
 
 local_labeled_images = labeled_images.collect()
 
-sc.stop()
+#sc.stop()
 
 local_image = random.choice(local_labeled_images)
 from IPython.display import Image
