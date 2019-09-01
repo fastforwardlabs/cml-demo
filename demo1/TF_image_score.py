@@ -15,7 +15,7 @@ image_batch_size = 4
 num_top_predictions = 5
 
 import numpy as np
-import random
+#import random
 import tensorflow as tf
 import os
 from tensorflow.python.platform import gfile
@@ -247,9 +247,9 @@ local_labeled_images = labeled_images.collect()
 
 #sc.stop()
 
-local_image = random.choice(local_labeled_images)
+#local_image = random.choice(local_labeled_images)
 from IPython.display import Image
 from IPython.core.display import HTML
-Image(url=local_image[1])
-print(local_image[2])
+Image(url=local_labeled_images[11][1])
+print(local_labeled_images[11][2])
 
