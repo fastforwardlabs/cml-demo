@@ -3,61 +3,130 @@ library(ggplot2)
 library(maps)
 library(geosphere)
 library (DBI)
-
-## Loading required package: sparklyr + dplyr
-
 library(sparklyr)
 library(dplyr)
 
-## Configure cluster
+## Connect to Spark. Check spark_defaults.conf for the correct 
+#spark_home_set("/etc/spark/")
+
 config <- spark_config()
-config$spark.driver.cores   <- 2
-config$spark.executor.cores <- 4
-config$spark.executor.memory <- "4G"
+config$spark.hadoop.fs.s3a.aws.credentials.provider  <- "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider"
+config$spark.hadoop.fs.s3a.metadatastore.impl <- "org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore"
+config$spark.hadoop.fs.s3a.delegation.token.binding <- ""
+config$spark.sql.catalogImplementation <- "in-memory"
+#config$spark.sql.hive.metastore.version <- "3.0"
+config$spark.yarn.access.hadoopFileSystems <- "s3a://ml-field/demo/flight-analysis/"
+config$spark.hadoop.hadoop.treat.subject.external <- 'true'
+config$spark.yarn.rmProxy.enabled <- 'false'
 
-spark_home <- "/opt/cloudera/parcels/SPARK2/lib/spark2"
-spark_version <- "2.0.0"
-sc <- spark_connect(master="yarn-client", version=spark_version, config=config, spark_home=spark_home)
+sc <- spark_connect(master = "yarn-client", config=config)
 
-dbSendQuery(sc,"CREATE DATABASE IF NOT EXISTS flights")
-tbl_change_db(sc,"flights")
+## Read in the flight data from S3
 
-dbSendQuery(sc,"CREATE EXTERNAL TABLE IF NOT EXISTS airports_str (   iata STRING,    airport STRING,    city STRING,    state STRING,    country STRING,    latitude DOUBLE,    longitude DOUBLE) ROW FORMAT  SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' STORED AS TEXTFILE LOCATION '/tmp/airports/' TBLPROPERTIES('skip.header.line.count'='1')")
-dbSendQuery(sc,"create table if not exists airports as (select iata, city, state, country, cast(latitude as double), cast (longitude as double) from airports_str)")
-dbSendQuery(sc,"CREATE EXTERNAL TABLE IF NOT EXISTS airlines_bi_pq ( year INT, month INT, day INT, dayofweek INT, dep_time INT, crs_dep_time INT, arr_time INT, crs_arr_time INT, carrier STRING, flight_num INT, tail_num INT, actual_elapsed_time INT, crs_elapsed_time INT, airtime INT, arrdelay INT, depdelay INT, origin STRING, dest STRING, distance INT, taxi_in INT, taxi_out INT, cancelled INT, cancellation_code STRING, diverted INT, carrier_delay INT, weather_delay INT, nas_delay INT, security_delay INT, late_aircraft_delay INT, date_yyyymm STRING) STORED AS PARQUET LOCATION '/tmp/airlines'")
+s3_link_all <-
+  "s3a://ml-field/demo/flight-analysis/data/airlines_csv/*"
 
-airlines <- tbl(sc, "airlines_bi_pq")
-airlines
 
-airline_counts_by_year <- airlines %>% group_by(year) %>% summarise(count=n()) %>% collect
-airline_counts_by_year %>% tbl_df %>% print(n=nrow(.))
-
-g <- ggplot(airline_counts_by_year, aes(x=year, y=count))
-g <- g + geom_line(
-  colour = "magenta",
-  linetype = 1,
-  size = 0.8
+cols = list(
+  FL_DATE = "date",
+  OP_CARRIER = "character",
+  OP_CARRIER_FL_NUM = "character",
+  ORIGIN = "character",
+  DEST = "character",
+  CRS_DEP_TIME = "character",
+  DEP_TIME = "character",
+  DEP_DELAY = "double",
+  TAXI_OUT = "double",
+  WHEELS_OFF = "character",
+  WHEELS_ON = "character",
+  TAXI_IN = "double",
+  CRS_ARR_TIME = "character",
+  ARR_TIME = "character",
+  ARR_DELAY = "double",
+  CANCELLED = "double",
+  CANCELLATION_CODE = "character",
+  DIVERTED = "double",
+  CRS_ELAPSED_TIME = "double",
+  ACTUAL_ELAPSED_TIME = "double",
+  AIR_TIME = "double",
+  DISTANCE = "double",
+  CARRIER_DELAY = "double",
+  WEATHER_DELAY = "double",
+  NAS_DELAY = "double",
+  SECURITY_DELAY = "double",
+  LATE_AIRCRAFT_DELAY = "double",
+  'Unnamed: 27' = "logical"
 )
+
+# Load all the flight data
+spark_read_csv(
+  sc,
+  name = "flight_data",
+  path = s3_link_all,
+  infer_schema = FALSE,
+  columns = cols,
+  header = TRUE
+)
+
+airlines <- tbl(sc, "flight_data")
+
+#Load all the airport data
+
+spark_read_csv(
+  sc,
+  name = "airports",
+  path = "s3a://ml-field/demo/flight-analysis/data/airports.csv",
+  infer_schema = TRUE,
+  header = TRUE
+)
+
+airports  <- tbl(sc, "airports")
+
+airports <- airports %>% collect
+
+## This is important, you can run spark.sql functions inside R
+
+# Add year and month fields to the flight data
+airlines <-
+  airlines %>% 
+  mutate(year = year(FL_DATE), month = month(FL_DATE)) 
+
+# Plot number of flights per year
+
+airline_counts_by_year <-
+  airlines %>% 
+  group_by(year) %>% 
+  summarise(count = n()) %>% 
+  collect()
+
+g <- ggplot(airline_counts_by_year, aes(x = year, y = count))
+g <- g + geom_line(colour = "magenta",
+                   linetype = 1,
+                   size = 0.8)
 g <- g + xlab("Year")
 g <- g + ylab("Flight number")
 g <- g + ggtitle("US flights")
 plot(g)
 
 
-# #See flight number between 2001 and 2003
+# #See flight number between 2010 and 2013
 #Next, let’s dig it for the 2002 data. Let’s plot flight number betwewen 2001 and 2003.
 
-airline_counts_by_month <- airlines %>% filter(year>= 2001 & year<=2003) %>% group_by(year, month) %>% summarise(count=n()) %>% collect
+airline_counts_by_month <-
+  airlines %>% filter(year >= 2010 &
+                        year <= 2013) %>% group_by(year, month) %>% summarise(count = n()) %>% collect
 
-g <- ggplot(
-  airline_counts_by_month, 
-  aes(x=as.Date(sprintf("%d-%02d-01", airline_counts_by_month$year, airline_counts_by_month$month)), y=count)
-  )
-g <- g + geom_line(
-  colour = "magenta",
-  linetype = 1,
-  size = 0.8
-)
+g <- ggplot(airline_counts_by_month,
+            aes(x = as.Date(
+              sprintf(
+                "%d-%02d-01",
+                airline_counts_by_month$year,
+                airline_counts_by_month$month
+              )
+            ), y = count))
+g <- g + geom_line(colour = "magenta",
+                   linetype = 1,
+                   size = 0.8)
 g <- g + xlab("Year/Month")
 g <- g + ylab("Flight number")
 g <- g + ggtitle("US flights")
@@ -65,35 +134,55 @@ plot(g)
 
 # Next, we will summarize the data by carrier, origin and dest.
 
-flights <- airlines %>% group_by(year, carrier, origin, dest) %>% summarise(count=n()) %>% collect
+flights <-
+  airlines %>% 
+  group_by(year, OP_CARRIER, ORIGIN, DEST) %>% 
+  summarise(count = n()) 
+
 flights
 
 airports <- tbl(sc, "airports") %>% collect
 
-#Now we extract AA’s flight in 2007.
+#Now we extract AA’s flight in 2010.
 
-flights_aa <- flights %>% filter(year==2007) %>% filter(carrier=="AA") %>% arrange(count)
+flights_aa <-
+  flights %>% filter(year == 2010) %>% filter(OP_CARRIER == "AA") %>% arrange(count) %>% collect
 flights_aa
 
 #Let’s plot the flight number of AA in 2007.
 
 # draw map with line of AA
-xlim <- c(-171.738281, -56.601563)
+xlim <- c(-171.738281,-56.601563)
 ylim <- c(12.039321, 71.856229)
 
 # Color settings
 pal <- colorRampPalette(c("#333333", "white", "#1292db"))
 colors <- pal(100)
 
-map("world", col="#6B6363", fill=TRUE, bg="#000000", lwd=0.05, xlim=xlim, ylim=ylim)
+map(
+  "world",
+  col = "#6B6363",
+  fill = TRUE,
+  bg = "#000000",
+  lwd = 0.05,
+  xlim = xlim,
+  ylim = ylim
+)
 
 maxcnt <- max(flights_aa$count)
-for (j in 1:length(flights_aa$carrier)) {
-  air1 <- airports[airports$iata == flights_aa[j,]$origin,]
-  air2 <- airports[airports$iata == flights_aa[j,]$dest,]
+for (j in 1:length(flights_aa$OP_CARRIER)) {
+  air1 <- airports[airports$iata == flights_aa[j, ]$ORIGIN, ]
+  air2 <- airports[airports$iata == flights_aa[j, ]$DEST, ]
   
-  inter <- gcIntermediate(c(air1[1,]$longitude, air1[1,]$latitude), c(air2[1,]$longitude, air2[1,]$latitude), n=100, addStartEnd=TRUE)
-  colindex <- round( (flights_aa[j,]$count / maxcnt) * length(colors) )
+  inter <-
+    gcIntermediate(
+      c(air1[1, ]$long, air1[1, ]$lat),
+      c(air2[1, ]$long, air2[1, ]$lat),
+      n = 100,
+      addStartEnd = TRUE
+    )
+  colindex <-
+    round((flights_aa[j, ]$count / maxcnt) * length(colors))
   
-  lines(inter, col=colors[colindex], lwd=0.8)
+  lines(inter, col = colors[colindex], lwd = 0.8)
 }
