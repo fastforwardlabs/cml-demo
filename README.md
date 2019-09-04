@@ -3,7 +3,7 @@
 Setup:  
 Admin->Engine  
 Engine Profile: 2 CPU / 8GB Memory (Add)  
->>>>>contact Cloudera for a custom docker engine link<<<<<<< . 
+   contact Cloudera for a custom docker engine link  
 RStudio			/usr/sbin/rstudio-server start  
 Jupyter Notebook	/usr/local/bin/jupyter-notebook --no-browser --ip=127.0.0.1 --port=${CDSW_APP_PORT} --NotebookApp.token= --NotebookApp.allow_remote_access=True --log-level=ERROR  
 
