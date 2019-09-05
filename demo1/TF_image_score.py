@@ -53,6 +53,7 @@ sc = SparkSession\
     .builder\
     .appName("S3 Image Scoring")\
     .config("spark.executor.memory", "4g")\
+    .config("spark.executor.cores", 1)\
     .config("spark.executor.instances", 2)\
     .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
     .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
