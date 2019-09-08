@@ -1,4 +1,4 @@
-FROM docker.repository.cloudera.com/cdsw/engine:8
+FROM docker.repository.cloudera.com/cdsw/engine:9
   WORKDIR /tmp
   COPY ./requirements3.txt ./install.R ./rserver.conf ./rstudio-cdsw /tmp/
   RUN /usr/local/bin/pip3 install -r /tmp/requirements3.txt && \
