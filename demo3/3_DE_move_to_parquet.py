@@ -1,6 +1,7 @@
 from pyspark.sql import SparkSession
 import os
 
+
 spark = SparkSession\
     .builder\
     .appName("Airline")\
@@ -18,6 +19,12 @@ spark = SparkSession\
     #.config("spark.hadoop.fs.s3a.delegation.token.binding","")\
 
 from pyspark.sql.types import *
+
+
+from IPython.core.display import HTML
+HTML('<a href="http://spark-{}.{}">Spark UI</a>'.format(os.getenv("CDSW_ENGINE_ID"),os.getenv("CDSW_DOMAIN")))
+
+HTML("<script src='https://d3js.org/d3.v5.min.js'></script>")
 
 schema = StructType([StructField("FL_DATE", TimestampType(), True),
 StructField("OP_CARRIER", StringType(), True),

@@ -59,7 +59,9 @@ sc = SparkSession\
     .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
     .config("spark.hadoop.com.amazonaws.services.s3a.enableV4","true")\
     .getOrCreate()._sc
-    
+
+from IPython.core.display import HTML
+HTML('<a href="http://spark-{}.{}">Spark UI</a>'.format(os.getenv("CDSW_ENGINE_ID"),os.getenv("CDSW_DOMAIN")))    
 
 model_data_bc = sc.broadcast(model_data)
 

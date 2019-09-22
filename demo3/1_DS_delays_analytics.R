@@ -2,8 +2,7 @@
 library(ggplot2)
 library(maps)
 library(geosphere)
-library (DBI)
-
+library(DBI)
 library(sparklyr)
 library(dplyr)
 
@@ -18,11 +17,16 @@ config$spark.executor.cores <- "4"
 config$spark.driver.memory <- "6g"
 config$spark.executor.instances <- "5"
 config$spark.dynamicAllocation.enabled  <- "false"
+#config$spark.ui.https.enabled <- "true"
+#config$spark.ssl.enabled <- "true"
 #config$spark.hadoop.fs.s3a.metadatastore.impl <- "org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore"
 #config$spark.sql.catalogImplementation <- "in-memory"
 #config$spark.yarn.access.hadoopFileSystems <- "s3a://ml-field/demo/flight-analysis/"
 
 sc <- spark_connect(master = "yarn-client", config=config)
+
+library(cdsw)
+html(paste("<a href='http://spark-",Sys.getenv("CDSW_ENGINE_ID"),".",Sys.getenv("CDSW_DOMAIN"),"' target='_blank'>Spark UI<a>",sep=""))
 
 ## Read in the flight data from S3
 
