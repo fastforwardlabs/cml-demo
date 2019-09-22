@@ -9,7 +9,7 @@ spark = SparkSession\
     .config("spark.driver.memory","6g")\
     .config("spark.executor.instances","3")\
     .config("spark.hadoop.fs.s3a.metadatastore.impl","org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore")\
-    .config("spark.hadoop.fs.s3a.delegation.token.binding","")\    
+    .config("spark.hadoop.fs.s3a.delegation.token.binding","")\
     .getOrCreate()
 #    .config("spark.hadoop.fs.s3a.access.key",os.getenv("AWS_ACCESS_KEY"))\
 #    .config("spark.hadoop.fs.s3a.secret.key",os.getenv("AWS_SECRET_KEY"))\
