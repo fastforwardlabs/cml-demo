@@ -8,7 +8,7 @@ import cdsw
 from torchtext import data
 from sklearn.model_selection import train_test_split
 
-data_dir = '/home/cdsw/demo2/data/'
+data_dir = '/home/cdsw/data/'
 model_dir = '/home/cdsw/demo2/model/'
 
 sentiments = pd.read_csv(data_dir+'Tweets.csv')
