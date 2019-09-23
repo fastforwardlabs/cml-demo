@@ -11,6 +11,8 @@ spark = SparkSession\
     .config("spark.hadoop.fs.s3a.metadatastore.impl","org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore")\
     .config("spark.hadoop.fs.s3a.delegation.token.binding","")\
     .getOrCreate()
+
+# Add the following if you need access to S3 buckets not supported by ID-Broker
 #    .config("spark.hadoop.fs.s3a.access.key",os.getenv("AWS_ACCESS_KEY"))\
 #    .config("spark.hadoop.fs.s3a.secret.key",os.getenv("AWS_SECRET_KEY"))\
 
@@ -84,4 +86,5 @@ predictionslr = lrModel.transform(test)
 evaluator = BinaryClassificationEvaluator(labelCol="CANCELLED",metricName="areaUnderROC")
 evaluator.evaluate(predictionslr)
 
+# This will write the model file out to S3, but it commented out for now.
 #lrModel.write().overwrite().save("s3a://ml-field/demo/flight-analysis/data/models/lr_model")

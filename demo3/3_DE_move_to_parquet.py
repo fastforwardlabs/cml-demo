@@ -12,19 +12,11 @@ spark = SparkSession\
     .config("spark.executor.instances","3")\
     .config("spark.dynamicAllocation.enabled","false")\
     .getOrCreate()
-#    .config("spark.hadoop.fs.s3a.access.key",os.getenv("AWS_ACCESS_KEY"))\
-#    .config("spark.hadoop.fs.s3a.secret.key",os.getenv("AWS_SECRET_KEY"))\
-#    .getOrCreate()
-    #.config("spark.hadoop.fs.s3a.metadatastore.impl","org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore")\
-    #.config("spark.hadoop.fs.s3a.delegation.token.binding","")\
 
 from pyspark.sql.types import *
 
-
 from IPython.core.display import HTML
 HTML('<a href="http://spark-{}.{}">Spark UI</a>'.format(os.getenv("CDSW_ENGINE_ID"),os.getenv("CDSW_DOMAIN")))
-
-HTML("<script src='https://d3js.org/d3.v5.min.js'></script>")
 
 schema = StructType([StructField("FL_DATE", TimestampType(), True),
 StructField("OP_CARRIER", StringType(), True),
@@ -63,7 +55,6 @@ from pyspark.sql.types import StringType
 from pyspark.sql.functions import udf
 
 udf1 = udf(lambda x: x if len(x) == 4 else "0{}".format(x),StringType())
-#df.withColumn('COLUMN_NAME_fix',udf1('COLUMN_NAME')).show()
 
 df.select("CRS_DEP_TIME").withColumn('pad_time', udf1("CRS_DEP_TIME")).show()
 
@@ -71,4 +62,5 @@ smaller_data_set = df.select("FL_DATE","OP_CARRIER","OP_CARRIER_FL_NUM","ORIGIN"
 
 smaller_data_set.show()
 
+# This is commented out as it has already been run
 #smaller_data_set.write.parquet(path="s3a://ml-field/demo/flight-analysis/data/airline_parquet_2/",compression="snappy")

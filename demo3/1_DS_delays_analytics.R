@@ -23,7 +23,7 @@ config$spark.dynamicAllocation.enabled  <- "false"
 #config$spark.sql.catalogImplementation <- "in-memory"
 #config$spark.yarn.access.hadoopFileSystems <- "s3a://ml-field/demo/flight-analysis/"
 
-sc <- spark_connect(master = "yarn-client", config=config)
+spark <- spark_connect(master = "yarn-client", config=config)
 
 library(cdsw)
 html(paste("<a href='http://spark-",Sys.getenv("CDSW_ENGINE_ID"),".",Sys.getenv("CDSW_DOMAIN"),"' target='_blank'>Spark UI<a>",sep=""))
@@ -66,7 +66,7 @@ cols = list(
 
 # Load all the flight data
 spark_read_csv(
-  sc,
+  spark,
   name = "flight_data",
   path = s3_link_all,
   infer_schema = FALSE,
@@ -74,19 +74,19 @@ spark_read_csv(
   header = TRUE
 )
 
-airlines <- tbl(sc, "flight_data")
+airlines <- tbl(spark, "flight_data")
 
 #Load all the airport data
 
 spark_read_csv(
-  sc,
+  spark,
   name = "airports",
   path = "s3a://ml-field/demo/flight-analysis/data/airports.csv",
   infer_schema = TRUE,
   header = TRUE
 )
 
-airports  <- tbl(sc, "airports")
+airports  <- tbl(spark, "airports")
 
 airports <- airports %>% collect
 
@@ -147,7 +147,7 @@ flights <-
 
 flights
 
-airports <- tbl(sc, "airports") %>% collect
+airports <- tbl(spark, "airports") %>% collect
 
 #Now we extract AA’s flight in 2010.
 
