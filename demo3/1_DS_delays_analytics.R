@@ -11,7 +11,6 @@ spark_home_set("/etc/spark/")
 
 config <- spark_config()
 config$spark.hadoop.fs.s3a.aws.credentials.provider  <- "org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider"
-
 config$spark.executor.memory <- "16g"
 config$spark.executor.cores <- "4"
 config$spark.driver.memory <- "6g"
@@ -19,9 +18,9 @@ config$spark.executor.instances <- "5"
 config$spark.dynamicAllocation.enabled  <- "false"
 #config$spark.ui.https.enabled <- "true"
 #config$spark.ssl.enabled <- "true"
-#config$spark.hadoop.fs.s3a.metadatastore.impl <- "org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore"
-#config$spark.sql.catalogImplementation <- "in-memory"
-#config$spark.yarn.access.hadoopFileSystems <- "s3a://ml-field/demo/flight-analysis/"
+config$spark.hadoop.fs.s3a.metadatastore.impl <- "org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore"
+config$spark.sql.catalogImplementation <- "in-memory"
+config$spark.yarn.access.hadoopFileSystems <- "s3a://ml-field/demo/flight-analysis/"
 
 spark <- spark_connect(master = "yarn-client", config=config)
 

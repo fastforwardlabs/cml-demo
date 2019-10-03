@@ -8,10 +8,16 @@ import sys
 from pyspark.sql import SparkSession
 from pyspark.sql.types import Row, StructField, StructType, StringType, IntegerType
 
+
+#NOTE: In CDP find the HMS external table location by browsing to:
+# Environment -> <env name> ->  Data Lake Cluster -> Cloud Storage
+# copy and paste the external location to the config setting below.
+
+
 spark = SparkSession\
     .builder\
     .appName("PythonSQL")\
-    .config("spark.yarn.access.hadoopFileSystems","s3a://prod-cdptrialuser05-trycdp-com/cdp-lake/warehouse/tablespace/managed/hive")\
+    .config("spark.yarn.access.hadoopFileSystems","s3a://<******BUCKET*****>/<*****DATALAKE*****/*****OBJECT*****")\
     .getOrCreate()
 
 spark.sql("SHOW databases").show()
