@@ -9,16 +9,15 @@
 
 #Temporary workaround for MLX-975
 #In utils/hive-site.xml edit hive.metastore.warehouse.dir and hive.metastore.warehouse.external.dir based on settings in CDP Data Lake -> Cloud Storage
-!cp /home/cdsw/utils/hive-site.xml /etc/hadoop/conf/
-
+  
+if ( not os.path.exists('/etc/hadoop/conf/hive-site.xml')):
+  !cp /home/cdsw/utils/hive-site.xml /etc/hadoop/conf/
 
 from __future__ import print_function
 import os
 import sys
 from pyspark.sql import SparkSession
 from pyspark.sql.types import Row, StructField, StructType, StringType, IntegerType
-
-
 
 
 spark = SparkSession\
