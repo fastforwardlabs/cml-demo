@@ -255,3 +255,5 @@ from IPython.core.display import HTML
 Image(url=local_labeled_images[11][1])
 print(local_labeled_images[11][2])
 
+#To be saved to RDBMS or SOLR
+[[i[1] for i in local_labeled_images], [i[2][0] for i in local_labeled_images]]
