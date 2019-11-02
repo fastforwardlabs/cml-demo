@@ -19,7 +19,7 @@ cycler==0.10.0
 Cython==0.25.2
 decorator==4.4.0
 docutils==0.14
-Flask==0.12
+Flask==1.0
 futures==2.1.4
 gast==0.2.2
 google-pasta==0.1.7
