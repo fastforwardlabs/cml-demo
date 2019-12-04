@@ -54,10 +54,7 @@ sc = SparkSession\
     .appName("S3 Image Scoring")\
     .config("spark.executor.memory", "4g")\
     .config("spark.executor.instances", 2)\
-    .config("spark.hadoop.fs.s3a.aws.credentials.provider","org.apache.hadoop.fs.s3a.AnonymousAWSCredentialsProvider")\
-    .config("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")\
-    .config("spark.hadoop.fs.s3a.connection.ssl.enabled","true")\
-    .config("spark.hadoop.com.amazonaws.services.s3a.enableV4","true")\
+    .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/")\
     .getOrCreate()._sc
 
 from IPython.core.display import HTML
