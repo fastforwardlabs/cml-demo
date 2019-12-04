@@ -5,13 +5,6 @@
 
 #NOTE: In CDP find the HMS warehouse directory and external table directory by browsing to:
 # Environment -> <env name> ->  Data Lake Cluster -> Cloud Storage
-# copy and paste the external location to the config setting below.
-
-#Temporary workaround for MLX-975
-#In utils/hive-site.xml edit hive.metastore.warehouse.dir and hive.metastore.warehouse.external.dir based on settings in CDP Data Lake -> Cloud Storage
-import os, shutil
-if ( not os.path.exists('/etc/hadoop/conf/hive-site.xml')):
-  shutil.copyfile("/home/cdsw/utils/hive-site.xml", "/etc/hadoop/conf/hive-site.xml")
 
 #Data taken from http://stat-computing.org/dataexpo/2009/the-data.html
 #!for i in `seq 1987 2008`; do wget http://stat-computing.org/dataexpo/2009/$i.csv.bz2; bunzip2 $i.csv.bz2; sed -i '1d' $i.csv; aws s3 cp $i.csv s3://ml-field/demo/flight-analysis/data/flights_csv/; rm $i.csv; done
@@ -26,10 +19,10 @@ from pyspark.sql.types import Row, StructField, StructType, StringType, IntegerT
 spark = SparkSession\
     .builder\
     .appName("PythonSQL")\
-    .config("spark.executor.memory", "8g")\
-    .config("spark.executor.instances", 5)\
+    .config("spark.executor.memory", "4g")\
+    .config("spark.executor.instances", 2)\
     .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/flight-analysis/data/")\
-    .config("spark.driver.maxResultSize","8g")\
+    .config("spark.driver.maxResultSize","4g")\
     .getOrCreate()
 
 spark.sql("SHOW databases").show()
