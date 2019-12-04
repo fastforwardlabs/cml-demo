@@ -11,8 +11,12 @@ This will install all requirements for the code below.
 
 Alternatively you can create a custom docker engine using the utils/Dockerfile.  
 For the CML trials contact Cloudera for a link to the engine image.  
-Create a new engine as a CML admin with the following editors
+Create a new engine as a CML admin with the following editors  
+
+
 -RStudio			/usr/sbin/rstudio-server start  
+
+
 -Jupyter Notebook	/usr/local/bin/jupyter-notebook --no-browser --ip=127.0.0.1 --port=${CDSW_APP_PORT} --NotebookApp.token= --NotebookApp.allow_remote_access=True --log-level=ERROR  
 
 
