@@ -10,7 +10,7 @@ import datetime
 #AWS_SECRET_ACCESS_KEY = '<KEY>'
 #regions = ['us-east-1','us-west-1','us-west-2','eu-west-1','sa-east-1','ap-southeast-1','ap-southeast-2','ap-northeast-1']
 regions = ['us-west-2']
-vpc = 'vpc-0644bd81b092b1ea7'
+vpc = 'vpc-xxxxxxxxxx'
 
 newdate=datetime.date.today() + datetime.timedelta(days=5)
 newdate = newdate.strftime("%m%d%Y")
