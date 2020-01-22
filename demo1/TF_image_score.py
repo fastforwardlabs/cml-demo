@@ -55,6 +55,7 @@ sc = SparkSession\
     .config("spark.executor.memory", "4g")\
     .config("spark.executor.instances", 2)\
     .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/")\
+    .config("spark.hadoop.fs.s3a.s3guard.ddb.region", "us-west-2")\
     .getOrCreate()._sc
 
 from IPython.core.display import HTML
