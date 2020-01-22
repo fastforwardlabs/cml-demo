@@ -45,7 +45,7 @@ spark.sql("SELECT * FROM `default`.`airports` LIMIT 10").show()
 
 
 
-#spark.sql("DROP TABLE flights").show()
+#spark.sql("DROP TABLE IF EXISTS flights").show()
 statement = '''
 CREATE EXTERNAL TABLE IF NOT EXISTS `default`.`flights` (
 `Year` int , 
@@ -81,9 +81,9 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 STORED AS TextFile 
 LOCATION 's3a://ml-field/demo/flight-analysis/data/flights_csv/'
 '''
-#spark.sql(statement) 
+spark.sql(statement) 
 
-#spark.sql("DROP TABLE airports").show()
+#spark.sql("DROP TABLE IF EXISTS airports").show()
 statement = '''
 CREATE EXTERNAL TABLE IF NOT EXISTS `default`.`airports` (
 `iata` string , 
@@ -97,10 +97,10 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 STORED AS TextFile 
 LOCATION 's3a://ml-field/demo/flight-analysis/data/airports_csv/'
 '''
-#spark.sql(statement) 
+spark.sql(statement) 
 
 
-#spark.sql("DROP TABLE airports_extended").show()
+#spark.sql("DROP TABLE IF EXISTS airports_extended").show()
 statement = '''
 CREATE EXTERNAL TABLE IF NOT EXISTS `default`.`airports_extended` (
 `ident` string , 
@@ -119,7 +119,7 @@ ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
 STORED AS TextFile 
 LOCATION 's3a://ml-field/demo/flight-analysis/data/airports-extended/'
 '''
-#spark.sql(statement) 
+spark.sql(statement) 
 
     
 #spark.stop()

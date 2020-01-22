@@ -32,6 +32,7 @@ spark = SparkSession\
     .config("spark.executor.memory","1g")\
     .config("spark.executor.cores","1")\
     .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/")\
+    .config("spark.hadoop.fs.s3a.s3guard.ddb.region", "us-west-2")\
     .getOrCreate()
 
 #    .config("spark.jars","file:/home/cdsw/jars/org.apache.hadoop_hadoop-aws-3.2.0.jar,file:/home/cdsw/jars/com.amazonaws_aws-java-sdk-bundle-1.11.375.jar")\    
