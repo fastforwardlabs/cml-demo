@@ -21,10 +21,12 @@ spark = SparkSession\
     .appName("PythonSQL")\
     .config("spark.executor.memory", "4g")\
     .config("spark.executor.instances", 2)\
-    .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/flight-analysis/data/")\
     .config("spark.driver.maxResultSize","4g")\
-    .config("spark.hadoop.fs.s3a.s3guard.ddb.region", "us-west-2")\
+    .config("fs.s3a.metadatastore.impl","org.apache.hadoop.fs.s3a.s3guard.NullMetadataStore")\
     .getOrCreate()
+
+#    .config("spark.hadoop.fs.s3a.s3guard.ddb.region", "us-west-2")\
+#    .config("spark.yarn.access.hadoopFileSystems","s3a://ml-field/demo/flight-analysis/data/")\
 
 spark.sql("SHOW databases").show()
 spark.sql("USE default")
