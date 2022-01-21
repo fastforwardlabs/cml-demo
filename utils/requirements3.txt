@@ -25,7 +25,7 @@ gast==0.2.2
 google-pasta==0.1.7
 grpcio==1.22.0
 h5py==2.9.0
-ipython==5.1.0
+ipython==7.16.3
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
 Jinja2==2.10.1
